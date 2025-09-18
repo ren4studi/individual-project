@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фаервол.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+            <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Вовченко Ярослав</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html"><i class="fas fa-home"></i> Главное меню</a></li>
+                <li><a href="password.html"><i class="fas fa-key"></i> Пароли</a></li>
+                <li><a href="hesh.html"><i class="fas fa-hashtag"></i> Хэширование</a></li>
+                <li><a href="shifr.html"><i class="fas fa-lock"></i> Шифрование</a></li>
+                <li><a href="endtoend.html"><i class="fas fa-fire"></i> E2E</a></li>
+            </ul>
+        </nav>
+    </header>
+
+        <div class="container" id="modules">
+        <div class="modules">
+            <!--файрвол 4 блок-->
+            <div class="module-card" id="firewall">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h2 class="module-title">Сетевой фаервол</h2>
+                </div>
+                <div class="module-content">
+                    <p>Симуляция работы сетевого экрана с правилами фильтрации трафика.</p>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-rules"></i> Правила фаервола:</label>
+                        <ul style="margin: 0.5rem 0 1rem 1.5rem; color: var(--text-secondary);">
+                            <li>Блокировать IP: 212.13.1.175</li>
+                            <li>Блокировать порт: 23 (Telnet)</li>
+                            <li>Разрешить всё остальное</li>
+                        </ul>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="simulateFirewall()">
+                        <i class="fas fa-play"></i> Запустить симуляцию
+                    </button>
+                    
+                    <div class="visualization" id="firewall-visualization">
+                        <p>Запустите симуляцию для отображения сетевого трафика...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Установка обработчика для ползунка сдвига
+            const shiftSlider = document.getElementById('encryption-shift');
+            const shiftValue = document.getElementById('shift-value');
+            
+            shiftSlider.addEventListener('input', function() {
+                shiftValue.textContent = this.value;
+            });
+            
+            // Инициализация модуля хэширования
+            compareHashes();
+        });
+        // Модуль 4: Фаервол
+        function simulateFirewall() {
+            const visualization = document.getElementById('firewall-visualization');
+            visualization.innerHTML = '<p>Имитация сетевого трафика...</p>';
+            
+            const packets = [
+                { ip: '192.168.1.101', port: 80, protocol: 'HTTP' },
+                { ip: '212.13.1.175', port: 443, protocol: 'HTTPS' },
+                { ip: '10.0.0.5', port: 23, protocol: 'Telnet' },
+                { ip: '192.168.1.105', port: 25, protocol: 'SMTP' },
+                { ip: '212.13.1.175', port: 80, protocol: 'HTTP' },
+                { ip: '172.16.0.3', port: 22, protocol: 'SSH' }
+            ];
+            
+            setTimeout(() => {
+                visualization.innerHTML = '';
+                
+                packets.forEach((packet, index) => {
+                    setTimeout(() => {
+                        const packetElement = document.createElement('div');
+                        packetElement.classList.add('packet');
+                        
+                        if (packet.ip === '212.13.1.175' || packet.port === 23) {
+                            packetElement.classList.add('denied');
+                            packetElement.innerHTML = `
+                                <div><i class="fas fa-times-circle" style="color: var(--accent-danger);"></i> ${packet.ip}:${packet.port} (${packet.protocol})</div>
+                                <div style="color: var(--accent-danger); font-weight: 600;">БЛОКИРОВКА</div>
+                            `;
+                        } else {
+                            packetElement.classList.add('allowed');
+                            packetElement.innerHTML = `
+                                <div><i class="fas fa-check-circle" style="color: var(--accent-success);"></i> ${packet.ip}:${packet.port} (${packet.protocol})</div>
+                                <div style="color: var(--accent-success); font-weight: 600;">РАЗРЕШЕНО</div>
+                            `;
+                        }
+                        
+                        visualization.appendChild(packetElement);
+                    }, index * 800);
+                });
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

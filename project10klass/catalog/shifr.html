@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шифрование.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+            <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Вовченко Ярослав</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html"><i class="fas fa-home"></i> Главное меню</a></li>
+                <li><a href="password.html"><i class="fas fa-key"></i> Пароли</a></li>
+                <li><a href="hesh.html"><i class="fas fa-hashtag"></i> Хэширование</a></li>
+                <li><a href="firewall.html"><i class="fas fa-fire"></i> Фаервол</a></li>
+                <li><a href="endtoend.html"><i class="fas fa-fire"></i> E2E</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container" id="modules">
+        <div class="modules">
+            <!--шифровка(криптография мб еще) 3 блок-->
+            <div class="module-card" id="encryption">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h2 class="module-title">Шифрование Цезаря</h2>
+                </div>
+                <div class="module-content">
+                    <p>Изучите основы криптографии с помощью классического шифра Цезаря.</p>
+                    
+                    <div class="input-group">
+                        <label for="encryption-text"><i class="fas fa-font"></i> Текст:</label>
+                        <input type="text" id="encryption-text" placeholder="Введите текст для шифрования">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="encryption-shift"><i class="fas fa-sliders-h"></i> Сдвиг (ключ):</label>
+                        <input type="range" id="encryption-shift" min="1" max="25" value="3">
+                        <span id="shift-value">3</span>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" onclick="encryptText()">
+                            <i class="fas fa-lock"></i> Зашифровать
+                        </button>
+                        <button class="btn btn-secondary" onclick="decryptText()">
+                            <i class="fas fa-unlock"></i> Расшифровать
+                        </button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="encryption-result"><i class="fas fa-result"></i> Результат:</label>
+                        <div class="result" id="encryption-result"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+  .my-image {
+    width: 1000px;
+    height: auto;
+    opacity: 0.013;
+  }
+</style>
+
+            <center><img src="https://foni.papik.pro/uploads/posts/2024-09/foni-papik-pro-bih1-p-kartinki-kakashka-na-prozrachnom-fone-2.png" alt="Картинка" class="my-image" /></center>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Установка обработчика для ползунка сдвига
+            const shiftSlider = document.getElementById('encryption-shift');
+            const shiftValue = document.getElementById('shift-value');
+            
+            shiftSlider.addEventListener('input', function() {
+                shiftValue.textContent = this.value;
+            });
+            
+            // Инициализация модуля хэширования
+            compareHashes();
+        });
+        // Модуль 3: Шифрование
+        function encryptText() {
+            const text = document.getElementById('encryption-text').value;
+            const shift = parseInt(document.getElementById('encryption-shift').value);
+            
+            if (!text) {
+                alert('Введите текст для шифрования');
+                return;
+            }
+            
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                
+                if (char.match(/[a-z]/i)) {
+                    const code = text.charCodeAt(i);
+                    
+                    if (code >= 65 && code <= 90) {
+                        char = String.fromCharCode(((code - 65 + shift) % 26) + 65);
+                    } else if (code >= 97 && code <= 122) {
+                        char = String.fromCharCode(((code - 97 + shift) % 26) + 97);
+                    }
+                }
+                
+                result += char;
+            }
+            
+            document.getElementById('encryption-result').textContent = result;
+        }
+        
+        function decryptText() {
+            const text = document.getElementById('encryption-text').value;
+            const shift = parseInt(document.getElementById('encryption-shift').value);
+            
+            if (!text) {
+                alert('Введите текст для расшифровки');
+                return;
+            }
+            
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                
+                if (char.match(/[a-z]/i)) {
+                    const code = text.charCodeAt(i);
+                    
+                    if (code >= 65 && code <= 90) {
+                        char = String.fromCharCode(((code - 65 - shift + 26) % 26) + 65);
+                    } else if (code >= 97 && code <= 122) {
+                        char = String.fromCharCode(((code - 97 - shift + 26) % 26) + 97);
+                    }
+                }
+                
+                result += char;
+            }
+            
+            document.getElementById('encryption-result').textContent = result;
+        }
+        </script>
+</body>
+</html>

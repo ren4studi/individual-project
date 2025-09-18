@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хэширование данных.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+            <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Вовченко Ярослав</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html"><i class="fas fa-home"></i> Главное меню</a></li>
+                <li><a href="password.html"><i class="fas fa-key"></i> Пароли</a></li>
+                <li><a href="shifr.html"><i class="fas fa-lock"></i> Шифрование</a></li>
+                <li><a href="firewall.html"><i class="fas fa-fire"></i> Фаервол</a></li>
+                <li><a href="endtoend.html"><i class="fas fa-fire"></i> E2E</a></li>
+            </ul>
+        </nav>
+    </header>
+
+        <div class="container" id="modules">
+        <div class="modules">
+
+                <div class="module-card" id="hashing">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                    <h2 class="module-title">Хэширование данных</h2>
+                </div>
+                <div class="module-content">
+                    <p>Как хэш-функции преобразуют данные.</p>
+                    
+                    <div class="input-group">
+                        <label for="hash-input"><i class="fas fa-font"></i> Введите текст:</label>
+                        <input type="text" id="hash-input" placeholder="Текст для хэширования" oninput="updateHash()">
+                    </div>
+                    
+                    <div class="result" id="hash-output">Хэш появится здесь...</div>
+                    
+                    <h4 style="margin-top: 1.5rem;"><i class="fas fa-bolt"></i> Лавинный эффект</h4>
+                    <p>Измените один символ, чтобы увидеть, как полностью меняется хэш:</p>
+                    
+                    <div class="hash-comparison">
+                        <div class="hash-box">
+                            <label for="original-text">Исходный текст:</label>
+                            <input type="text" id="original-text" value="HelloWorld" oninput="compareHashes()">
+                            <div class="result" id="original-hash"></div>
+                        </div>
+                        
+                        <div class="hash-box">
+                            <label for="modified-text">Измененный текст:</label>
+                            <input type="text" id="modified-text" value="HelloWorld" oninput="compareHashes()">
+                            <div class="result" id="modified-hash"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="difference" id="hash-difference"></div>
+                </div>
+            </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Установка обработчика для ползунка сдвига
+            const shiftSlider = document.getElementById('encryption-shift');
+            const shiftValue = document.getElementById('shift-value');
+            
+            shiftSlider.addEventListener('input', function() {
+                shiftValue.textContent = this.value;
+            });
+            
+            // Инициализация модуля хэширования
+            compareHashes();
+        });
+
+    // Модуль 2: Хэширование
+        function simpleHashFunction(input) {
+            let hash = 0;
+            for (let i = 0; i < input.length; i++) {
+                hash = ((hash << 5) - hash) + input.charCodeAt(i);
+                hash |= 0;
+            }
+            return hash.toString(16);
+        }
+        
+        function updateHash() {
+            const input = document.getElementById('hash-input').value;
+            const hashOutput = document.getElementById('hash-output');
+            
+            if (!input) {
+                hashOutput.textContent = 'Хэш появится здесь...';
+                return;
+            }
+            
+            const hash = simpleHashFunction(input);
+            hashOutput.textContent = hash;
+        }
+        
+        function compareHashes() {
+            const originalText = document.getElementById('original-text').value;
+            const modifiedText = document.getElementById('modified-text').value;
+            
+            const originalHash = simpleHashFunction(originalText);
+            const modifiedHash = simpleHashFunction(modifiedText);
+            
+            document.getElementById('original-hash').textContent = originalHash;
+            document.getElementById('modified-hash').textContent = modifiedHash;
+            
+            const difference = document.getElementById('hash-difference');
+            if (originalText === modifiedText) {
+                difference.textContent = "Тексты идентичны - хэши одинаковые";
+                difference.style.background = 'var(--accent-success)';
+                difference.style.color = 'white';
+            } else {
+                difference.textContent = "Тексты разные - хэши полностью отличаются (лавинный эффект)";
+                difference.style.background = 'var(--accent-danger)';
+                difference.style.color = 'white';
+            }
+        }
+        </script>
+</body>
+</html>

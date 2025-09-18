@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сквозное шифрование.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #15151f;
+            --bg-card: #1a1a2e;
+            --accent-primary: #6366f1;
+            --accent-secondary: #818cf8;
+            --accent-danger: #ef4444;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #2d3748;
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            --glow-primary: 0 0 15px rgba(99, 102, 241, 0.4);
+            --glow-success: 0 0 15px rgba(16, 185, 129, 0.4);
+            --glow-danger: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(239, 68, 68, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 20%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            opacity: 0.9;
+        }
+
+        /* Explanation Section */
+        .explanation {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .explanation h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .explanation p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .visualization {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1.5rem;
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .user, .server, .encrypted {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .server {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .encrypted {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        .arrow {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+
+        /* Demo Section */
+        .demo-section {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .users {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .user-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-primary);
+        }
+
+        .user-card h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Input Groups */
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        textarea, input {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Buttons */
+        button {
+            width: 100%;
+            padding: 0.875rem 1.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--glow-primary);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Message Boxes */
+        .message-box, .encrypted-box, .server-message {
+            background: var(--bg-primary);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            min-height: 120px;
+            margin-bottom: 1rem;
+            word-break: break-all;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .encrypted-box {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--accent-danger);
+            box-shadow: var(--glow-danger);
+        }
+
+        .server-message {
+            text-align: center;
+        }
+
+        .server-note {
+            color: var(--accent-danger);
+            font-weight: 600;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Technical Details */
+        .technical-details {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .technical-details h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .detail-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .detail-card h4 {
+            color: var(--accent-primary);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Real World Apps */
+        .real-world {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .real-world h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .apps {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .app {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+
+        .app:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-secondary);
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            border-radius: 16px 16px 0 0;
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .user-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .user-card:nth-child(1) { animation-delay: 0.1s; }
+        .user-card:nth-child(2) { animation-delay: 0.2s; }
+        .user-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .detail-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .detail-card:nth-child(1) { animation-delay: 0.1s; }
+        .detail-card:nth-child(2) { animation-delay: 0.2s; }
+        .detail-card:nth-child(3) { animation-delay: 0.3s; }
+        .detail-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            header {
+                padding: 1rem;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .users {
+                grid-template-columns: 1fr;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .visualization {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .arrow {
+                transform: rotate(90deg);
+                margin: 0.5rem 0;
+            }
+            
+            .explanation, .demo-section, .technical-details, .real-world {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .user, .server, .encrypted {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .apps {
+                gap: 0.5rem;
+            }
+            
+            .app {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+
+                    .logo i {
+            color: var(--accent-primary);
+        }
+
+                .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+        }
+    </style>
+</head>
+<body>
+
+                <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Вовченко Ярослав</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html"><i class="fas fa-home"></i> Главное меню</a></li>
+                <li><a href="password.html"><i class="fas fa-key"></i> Пароли</a></li>
+                <li><a href="hesh.html"><i class="fas fa-hashtag"></i> Хэширование</a></li>
+                <li><a href="shifr.html"><i class="fas fa-lock"></i> Шифрование</a></li>
+                <li><a href="firewall.html"><i class="fas fa-fire"></i> Фаервол</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <header>
+            <h1>Сквозное шифрование</h1>
+            <p class="subtitle">Демонстрация сквозного шифрования</p>
+        </header>
+
+        <div class="explanation">
+            <h2>Что такое сквозное шифрование?</h2>
+            <p>Сквозное шифрование (End-to-End Encryption) — это метод защиты данных, при котором информация шифруется на устройстве отправителя и расшифровывается только на устройстве получателя. Даже сервер не может прочитать ваши сообщения!</p>
+            
+            <div class="visualization">
+                <div class="user"><i class="fas fa-user"></i> Биба</div>
+                <div class="arrow">→</div>
+                <div class="encrypted"><i class="fas fa-lock"></i> Зашифровано</div>
+                <div class="arrow">→</div>
+                <div class="server"><i class="fas fa-server"></i> Сервер</div>
+                <div class="arrow">→</div>
+                <div class="encrypted"><i class="fas fa-lock"></i> Зашифровано</div>
+                <div class="arrow">→</div>
+                <div class="user"><i class="fas fa-user"></i> Боба</div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Демонстрация</h2>
+            
+            <div class="users">
+                <div class="user-card">
+                    <h3><i class="fas fa-user"></i> Алиса (Отправитель)</h3>
+                    <div class="input-group">
+                        <label>Сообщение:</label>
+                        <textarea id="originalMessage" placeholder="Введите сообщение для шифрования..." rows="4"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Секретный ключ:</label>
+                        <input type="password" id="encryptionKey" placeholder="Введите ключ для шифрования">
+                    </div>
+                    <button onclick="encryptMessage()">
+                        <i class="fas fa-lock"></i> Зашифровать →
+                    </button>
+                </div>
+
+                <div class="user-card">
+                    <h3><i class="fas fa-server"></i> Сервер (Посредник)</h3>
+                    <div class="server-message">
+                        <p>Я вижу только это:</p>
+                        <div id="encryptedMessage" class="encrypted-box">
+                            Здесь появится зашифрованное сообщение...
+                        </div>
+                        <p class="server-note">⚠️ Я не могу прочитать содержимое!</p>
+                    </div>
+                </div>
+
+                <div class="user-card">
+                    <h3><i class="fas fa-user"></i> Боб (Получатель)</h3>
+                    <div id="decryptedMessage" class="message-box">
+                        Здесь появится расшифрованное сообщение...
+                    </div>
+                    <div class="input-group">
+                        <label>Секретный ключ:</label>
+                        <input type="password" id="decryptionKey" placeholder="Введите ключ для расшифровки">
+                    </div>
+                    <button onclick="decryptMessage()">
+                        <i class="fas fa-unlock"></i> ← Расшифровать
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="technical-details">
+            <h2>Как это работает технически?</h2>
+            <div class="details-grid">
+                <div class="detail-card">
+                    <h4><i class="fas fa-key"></i> Генерация ключей</h4>
+                    <p>На устройствах пользователей генерируются пары ключей: открытый (для шифрования) и закрытый (для расшифровки)</p>
+                </div>
+                <div class="detail-card">
+                    <h4><i class="fas fa-lock"></i> Шифрование</h4>
+                    <p>Сообщение шифруется на устройстве отправителя с использованием открытого ключа получателя</p>
+                </div>
+                <div class="detail-card">
+                    <h4><i class="fas fa-exchange-alt"></i> Передача</h4>
+                    <p>Зашифрованные данные передаются через сервер, который не может их прочитать</p>
+                </div>
+                <div class="detail-card">
+                    <h4><i class="fas fa-unlock"></i> Расшифровка</h4>
+                    <p>Только получатель может расшифровать сообщение своим закрытым ключом</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="real-world">
+            <h2>Где используется E2E шифрование?</h2>
+            <div class="apps">
+                <div class="app">WhatsApp</div>
+                <div class="app">Signal</div>
+                <div class="app">Telegram</div>
+                <div class="app">Банки</div>
+                <div class="app">Zoom</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Школьный проект по кибербезопасности | Сделано с помощью Web Crypto API</p>
+        </footer>
+    </div>
+
+    <script>
+        // Глобальные переменные для хранения зашифрованных данных
+        let encryptedData = null;
+        let encryptionIv = null;
+
+        // Функция для шифрования сообщения
+        async function encryptMessage() {
+            const message = document.getElementById('originalMessage').value;
+            const key = document.getElementById('encryptionKey').value;
+            
+            if (!message || !key) {
+                alert('Пожалуйста, введите сообщение и ключ!');
+                return;
+            }
+            
+            try {
+                // Преобразуем ключ в формат для алгоритма
+                const encoder = new TextEncoder();
+                const keyData = encoder.encode(key.padEnd(32, ' ').slice(0, 32)); // 256-bit key
+                
+                // Генерируем случайный IV (Initialization Vector)
+                const iv = crypto.getRandomValues(new Uint8Array(16));
+                encryptionIv = iv;
+                
+                // Импортируем ключ
+                const cryptoKey = await crypto.subtle.importKey(
+                    'raw',
+                    keyData,
+                    { name: 'AES-CBC' },
+                    false,
+                    ['encrypt']
+                );
+                
+                // Шифруем сообщение
+                const encrypted = await crypto.subtle.encrypt(
+                    {
+                        name: 'AES-CBC',
+                        iv: iv
+                    },
+                    cryptoKey,
+                    encoder.encode(message)
+                );
+                
+                // Сохраняем зашифрованные данные
+                encryptedData = new Uint8Array(encrypted);
+                
+                // Показываем зашифрованное сообщение (в hex формате)
+                const encryptedHex = Array.from(encryptedData).map(b => 
+                    b.toString(16).padStart(2, '0')
+                ).join('');
+                
+                const ivHex = Array.from(iv).map(b => 
+                    b.toString(16).padStart(2, '0')
+                ).join('');
+                
+                document.getElementById('encryptedMessage').innerHTML = `
+                    <strong>Данные:</strong> ${encryptedHex}<br><br>
+                    <strong>IV:</strong> ${ivHex}<br><br>
+                    <strong>Алгоритм:</strong> AES-256-CBC
+                `;
+                
+                // Очищаем поле для расшифровки
+                document.getElementById('decryptedMessage').textContent = 
+                    'Сообщение зашифровано. Введите ключ для расшифровки.';
+                    
+            } catch (error) {
+                console.error('Ошибка шифрования:', error);
+                alert('Произошла ошибка при шифровании!');
+            }
+        }
+
+        // Функция для расшифровки сообщения
+        async function decryptMessage() {
+            const key = document.getElementById('decryptionKey').value;
+            
+            if (!encryptedData || !encryptionIv || !key) {
+                alert('Сначала зашифруйте сообщение и введите ключ!');
+                return;
+            }
+            
+            try {
+                // Преобразуем ключ
+                const encoder = new TextEncoder();
+                const keyData = encoder.encode(key.padEnd(32, ' ').slice(0, 32));
+                
+                // Импортируем ключ
+                const cryptoKey = await crypto.subtle.importKey(
+                    'raw',
+                    keyData,
+                    { name: 'AES-CBC' },
+                    false,
+                    ['decrypt']
+                );
+                
+                // Расшифровываем сообщение
+                const decrypted = await crypto.subtle.decrypt(
+                    {
+                        name: 'AES-CBC',
+                        iv: encryptionIv
+                    },
+                    cryptoKey,
+                    encryptedData
+                );
+                
+                // Показываем расшифрованное сообщение
+                const decoder = new TextDecoder();
+                const decryptedMessage = decoder.decode(decrypted);
+                
+                document.getElementById('decryptedMessage').innerHTML = `
+                    <strong>✅ Сообщение расшифровано:</strong><br><br>
+                    "${decryptedMessage}"
+                `;
+                
+            } catch (error) {
+                console.error('Ошибка расшифровки:', error);
+                document.getElementById('decryptedMessage').innerHTML = `
+                    <strong>❌ Ошибка расшифровки!</strong><br><br>
+                    Неверный ключ или поврежденные данные.
+                `;
+            }
+        }
+
+        // Демонстрационный пример при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Автозаполнение демо-данных
+            document.getElementById('originalMessage').value = 
+                'Это секретное сообщение, защищенное E2E шифрованием!';
+            document.getElementById('encryptionKey').value = 'мой_супер_секретный_ключ';
+            document.getElementById('decryptionKey').value = 'мой_супер_секретный_ключ';
+        });
+    </script>
+</body>
+</html>

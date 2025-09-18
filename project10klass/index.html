@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Возможности кибербезопасности</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="catalog/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Вовченко Ярослав</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="catalog/password.html"><i class="fas fa-key"></i> Пароли</a></li>
+                <li><a href="catalog/hesh.html"><i class="fas fa-hashtag"></i> Хэширование</a></li>
+                <li><a href="catalog/shifr.html"><i class="fas fa-lock"></i> Шифрование</a></li>
+                <li><a href="catalog/firewall.html"><i class="fas fa-fire"></i> Фаервол</a></li>
+                <li><a href="catalog/endtoend.html"><i class="fas fa-fire"></i> E2E</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Мир кибербезопасности</h1>
+        <p>Мир кибербезопасности – это динамичная область, включающая технологии, практики и процессы, направленные на защиту компьютерных систем, сетей и данных от цифровых атак, вирусов и кражи информации.</p>
+        <p>то включает в себя предотвращение угроз, таких как хакерские атаки и вредоносное ПО, защиту от инцидентов, а также обеспечение непрерывности бизнес-процессов и восстановление после атак. </p>
+        <div class="hero-buttons">
+            <a href="#modules" class="btn btn-primary"><i class="fas fa-play"></i> Начать изучение</a>
+            <!-- <a href="#theory" class="btn btn-secondary"><i class="fas fa-book"></i> Теоретические материалы</a> -->
+        </div>
+    </section>
+
+    <style>
+            /* Technical Details */
+        .technical-details {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .technical-details h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .detail-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .detail-card h4 {
+            color: var(--accent-primary);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+</style>
+
+
+    <div class="container" id="modules">
+            <section class="hero">
+                <h1>Что представленно в моем проекте?</h1>
+            </section>
+            <div class="modules">
+                <div class="detail-card">
+                    <h4><i class="fas fa-key"></i> Анализ надежности пароля.</h4>
+                    <p>На устройствах пользователей генерируются пары ключей: открытый (для шифрования) и закрытый (для расшифровки)</p>
+                </div>
+                <div class="detail-card">
+                    <h4><i class="fas fa-hashtag"></i> Хэширование данных</h4>
+                    <p>Сообщение шифруется на устройстве отправителя с использованием открытого ключа получателя</p>
+                </div>
+                <div class="detail-card">
+                    <h4><i class="fas fa-lock"></i> Шифрование.</h4>
+                    <p>Зашифрованные данные передаются через сервер, который не может их прочитать</p>
+                </div>
+                <div class="detail-card">
+                    <h4><i class="fas fa-fire"></i> Фаервол.</h4>
+                    <p>Только получатель может расшифровать сообщение своим закрытым ключом</p>
+                </div>
+                <div class="detail-card">
+                    <h4><i class="fas fa-unlock"></i> E2E Шифрование.</h4>
+                    <p>Только получатель может расшифровать сообщение своим закрытым ключом</p>
+                </div>
+            </div>
+        </div>
+
+                    <style>
+  .my-image {
+    width: 20px;
+    height: auto;
+    opacity: 0.1;
+        border-radius: 30px; /* Радиус скругления */
+    border: 3px solid green; /* Параметры рамки */
+    box-shadow: 0 0 7px #666; /* Параметры тени */
+  }
+</style>
+
+            <center><img src="https://i.redd.it/dlw1flu8ooaf1.jpeg" alt="Картинка" class="my-image" /></center>
+
+    <div class="container" id="modules">
+        <div class="modules">
+    <footer>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://github.com/ren4studi/individual-project"><i class="fab fa-github"></i></a>
+            </div>
+            <p class="footer-text">Сайт написан для проекта по кибербезопасности | Углублённая информатика 10 класс</p>
+            <p class="footer-text">2025 | Индивидуальный проект.</p>
+        </div>
+    </footer>
+</body>
+</html>
