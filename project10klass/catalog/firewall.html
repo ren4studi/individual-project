@@ -61,7 +61,7 @@
 
         <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Установка обработчика для ползунка сдвига
+            // сдвиг
             const shiftSlider = document.getElementById('encryption-shift');
             const shiftValue = document.getElementById('shift-value');
             
@@ -69,10 +69,9 @@
                 shiftValue.textContent = this.value;
             });
             
-            // Инициализация модуля хэширования
             compareHashes();
         });
-        // Модуль 4: Фаервол
+        // фаервол(узнать про telnet)
         function simulateFirewall() {
             const visualization = document.getElementById('firewall-visualization');
             visualization.innerHTML = '<p>Имитация сетевого трафика...</p>';
@@ -115,4 +114,5 @@
         }
     </script>
 </body>
+
 </html>
